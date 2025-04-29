@@ -9,7 +9,8 @@
   "author": "Vanya Huaman",
   "license": "ISC",
   "dependencies": {
-    "commander": "^13.1.0"
+    "commander": "^13.1.0",
+    "ora": "^8.2.0"
   },
   "bin": {
     "aabx": "./index.js"
