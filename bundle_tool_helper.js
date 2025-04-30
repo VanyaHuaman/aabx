@@ -19,7 +19,7 @@ export default class BundleToolHelper {
             childProcess.exec(`bundletool install-apks --apks=${TEMP_FILE}`, (error) => {
                 if (error) {
                     spinner.fail('Failed to Install Apk')
-                    console.error(`install exec error: ${error}`);
+                    console.error(`bundletool install exec error: ${error}`);
                     reject()
                 }
                 spinner.succeed('Apk Installed')
@@ -61,5 +61,24 @@ export default class BundleToolHelper {
             }
             resolve();
         })
+    }
+
+    static async getPackageName(filePath) {
+        const spinner = ora('Retrieving App Package Name')
+        return await new Promise((resolve, reject) => {
+            spinner.start();
+            spinner.color = 'green';
+            childProcess.exec(`bundletool dump manifest --bundle=${filePath} | grep "package=" | awk -F 'package="' '{ print $2 }' | cut -d'"' -f1`, (error, stdout) => {
+                if (error) {
+                    spinner.fail(`Failed Retrieve App Name from ${filePath}`)
+                    console.error(`bundletool dump manifest exec error: ${error}`);
+                    reject()
+                } else {
+                    spinner.succeed(`Retrieved App Name:${stdout} from ${filePath}`)
+                    resolve(stdout)
+                }
+            });
+        }).catch(() => {
+        });
     }
 }

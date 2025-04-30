@@ -15,12 +15,18 @@ program.command('install')
     .action(async (file, options) => {
         if (options.freshInstall) {
             console.log("Do Fresh Install")
-            // TODO REMOVE APP INSTALLED ON DEVICE
+            await AdbHelper.uninstallPackage(file)
             await BundleToolHelper.freshInstall(file)
         } else {
             console.log("Install On Top of Existing")
             await BundleToolHelper.freshInstall(file)
         }
+    })
+
+program.command('uninstall')
+    .argument('<string>', 'aab file')
+    .action(async (file) => {
+        await AdbHelper.uninstallPackage(file)
     })
 
 program.parse(process.argv);
