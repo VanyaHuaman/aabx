@@ -37,10 +37,4 @@ program.command('install')
         }
     })
 
-program.command('isInstalled')
-    .argument('<string>', 'aab file')
-    .action(async (file) => {
-        await AdbHelper.isPackageInstalled(file)
-    })
-
 program.parse(process.argv);
