@@ -72,6 +72,7 @@ export default class BundleToolHelper {
                 }
             });
         }).catch(() => {
+            console.error(`Retrieving App Package Name exec error: ${error}`);
         });
     }
 }

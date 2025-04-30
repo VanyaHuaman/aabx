@@ -37,10 +37,10 @@ program.command('install')
         }
     })
 
-program.command('uninstall')
+program.command('isInstalled')
     .argument('<string>', 'aab file')
     .action(async (file) => {
-        await AdbHelper.uninstallPackage(file)
+        await AdbHelper.isPackageInstalled(file)
     })
 
 program.parse(process.argv);

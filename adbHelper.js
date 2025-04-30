@@ -7,8 +7,8 @@ export default class AdbHelper {
     static async uninstallPackage(filePath) {
         await new Promise(async (resolve, reject) => {
             const packageName = await BundleHelper.getPackageName(filePath)
-            const isPackageInstalled = await this.isPackageInstalled(filePath)
-            if (isPackageInstalled) {
+            const isPackageInstalled = await this.isPackageInstalled(packageName)
+            if (isPackageInstalled === 'true') {
                 const spinner = ora(`Uninstalling ${packageName}`)
                 spinner.start();
                 spinner.color = 'green';
@@ -34,17 +34,23 @@ export default class AdbHelper {
         });
     }
 
-    static async isPackageInstalled(filePath) {
-        return await new Promise((resolve, reject) => {
-            childProcess.exec(`adb shell pm list packages | grep '${filePath}' && echo true || echo false`, (error, stdout) => {
+    static async isPackageInstalled(packageName) {
+        return await new Promise(async (resolve, reject) => {
+            childProcess.exec(`if [[ $(adb shell pm list packages -e | grep '${packageName}') ]]; 
+            then 
+                echo true | tr -d '\\n'
+            else
+                echo false | tr -d '\\n'
+            fi`, (error, stdout) => {
                 if (error) {
-                    console.error(`bundletool dump manifest exec error: ${error}`);
+                    console.error(`adb shell pm exec error: ${error}`);
                     reject(false)
                 } else {
                     resolve(stdout)
                 }
             });
         }).catch(() => {
+            console.error(`adb shell pm exception: ${error}`);
         });
     }
 }
