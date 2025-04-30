@@ -5,13 +5,6 @@ import ora from 'ora';
 
 export default class BundleToolHelper {
 
-    static async freshInstall(filePath) {
-        await this.cleanTempFiles(false);
-        await this.bundleTempApk(filePath);
-        await this.installTempApk();
-        await this.cleanTempFiles(true);
-    }
-
     static async installTempApk() {
         await new Promise((resolve, reject) => {
             const spinner = ora('Installing Apk').start();
@@ -68,7 +61,7 @@ export default class BundleToolHelper {
         return await new Promise((resolve, reject) => {
             spinner.start();
             spinner.color = 'green';
-            childProcess.exec(`bundletool dump manifest --bundle=${filePath} | grep "package=" | awk -F 'package="' '{ print $2 }' | cut -d'"' -f1`, (error, stdout) => {
+            childProcess.exec(`bundletool dump manifest --bundle=${filePath} | grep "package=" | awk -F 'package="' '{ print $2 }' | cut -d'"' -f1 | tr -d '\\n'`, (error, stdout) => {
                 if (error) {
                     spinner.fail(`Failed Retrieve App Name from ${filePath}`)
                     console.error(`bundletool dump manifest exec error: ${error}`);

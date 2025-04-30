@@ -4,6 +4,21 @@ import {program} from "commander";
 import AdbHelper from "./adbHelper.js"
 import BundleToolHelper from "./bundle_tool_helper.js"
 
+async function freshInstall(filePath) {
+    await BundleToolHelper.cleanTempFiles(false);
+    await AdbHelper.uninstallPackage(filePath);
+    await BundleToolHelper.bundleTempApk(filePath);
+    await BundleToolHelper.installTempApk();
+    await BundleToolHelper.cleanTempFiles(true);
+}
+
+async function install(filePath) {
+    await BundleToolHelper.cleanTempFiles(false);
+    await BundleToolHelper.bundleTempApk(filePath);
+    await BundleToolHelper.installTempApk();
+    await BundleToolHelper.cleanTempFiles(true);
+}
+
 program
     .version("1.0.0")
     .description("Android AAB Installer");
@@ -15,11 +30,10 @@ program.command('install')
     .action(async (file, options) => {
         if (options.freshInstall) {
             console.log("Do Fresh Install")
-            await AdbHelper.uninstallPackage(file)
-            await BundleToolHelper.freshInstall(file)
+            await freshInstall(file)
         } else {
             console.log("Install On Top of Existing")
-            await BundleToolHelper.freshInstall(file)
+            await install(file)
         }
     })
 
